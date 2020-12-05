@@ -8,6 +8,10 @@
     "noEmit": true,
     "jsx": "react",
     "strict": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
     "pretty": true,
     "sourceMap": true,
     /* Additional Checks */
@@ -20,7 +24,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["app/*"]
+    }
   },
   "exclude": [
     "test",

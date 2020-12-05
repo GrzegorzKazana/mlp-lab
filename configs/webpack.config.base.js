@@ -4,6 +4,7 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import TsConfigPaths from 'tsconfig-paths-webpack-plugin';
 import { dependencies as externals } from '../app/package.json';
 
 export default {
@@ -36,6 +37,7 @@ export default {
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     modules: [path.join(__dirname, '..', 'app'), 'node_modules'],
+    plugins: [new TsConfigPaths()],
   },
 
   optimization: {
