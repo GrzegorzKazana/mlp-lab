@@ -15,6 +15,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import registerEpic from './config/ipc/ipc-main';
 
 export default class AppUpdater {
   constructor() {
@@ -45,7 +46,7 @@ const installExtensions = async () => {
 
   return installer
     .default(
-      extensions.map((name) => installer[name]),
+      extensions.map(name => installer[name]),
       forceDownload
     )
     .catch(console.log);
@@ -83,6 +84,8 @@ const createWindow = async () => {
             preload: path.join(__dirname, 'dist/renderer.prod.js'),
           },
   });
+
+  registerEpic(mainWindow);
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 

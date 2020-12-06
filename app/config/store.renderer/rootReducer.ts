@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
-import counterReducer, {
+import {
+  reducer as counterReducer,
   name as counterName,
-} from '@/features/counter/counterSlice';
+} from '@/features/counter/store.renderer';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -11,3 +12,5 @@ export default function createRootReducer(history: History) {
     [counterName]: counterReducer,
   });
 }
+
+export type AppState = ReturnType<ReturnType<typeof createRootReducer>>;

@@ -5,13 +5,7 @@ import { Link } from 'react-router-dom';
 import routes from '@/config/routes';
 
 import styles from './Counter.css';
-import {
-  increment,
-  decrement,
-  incrementIfOdd,
-  incrementAsync,
-  selectCount,
-} from './counterSlice';
+import { Action, selectCount } from './store.renderer';
 
 export default function Counter() {
   const dispatch = useDispatch();
@@ -31,7 +25,7 @@ export default function Counter() {
         <button
           className={styles.btn}
           onClick={() => {
-            dispatch(increment());
+            dispatch(Action.INCREMENT());
           }}
           data-tclass="btn"
           type="button"
@@ -41,14 +35,14 @@ export default function Counter() {
         <button
           className={styles.btn}
           onClick={() => {
-            dispatch(decrement());
+            dispatch(Action.DECREMENT());
           }}
           data-tclass="btn"
           type="button"
         >
           <i className="fa fa-minus" />
         </button>
-        <button
+        {/* <button
           className={styles.btn}
           onClick={() => {
             dispatch(incrementIfOdd());
@@ -57,16 +51,16 @@ export default function Counter() {
           type="button"
         >
           odd
-        </button>
+        </button> */}
         <button
           className={styles.btn}
           onClick={() => {
-            dispatch(incrementAsync());
+            dispatch(Action.RANDOM_REQUEST());
           }}
           data-tclass="btn"
           type="button"
         >
-          async
+          random
         </button>
       </div>
     </div>

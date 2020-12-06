@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { hot } from 'react-hot-loader/root';
 import { History } from 'history';
-import { Store } from '@/config/store';
+import { Store } from '@/config/store.renderer/store';
 
 import Routes from './Routes';
 
