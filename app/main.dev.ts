@@ -15,7 +15,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
-import registerEpic from './config/ipc/ipc-main';
+import registerEpic from './config/ipc/ipc.main';
 
 export default class AppUpdater {
   constructor() {

@@ -2,6 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { createEpicMiddleware } from 'redux-observable';
 import { createStore, applyMiddleware, compose } from 'redux';
+import { ipcRenderer } from 'electron';
 import { createHashHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 
@@ -12,6 +13,7 @@ import type { AppEpic } from './rootEpic';
 
 import createRootReducer from './rootReducer';
 import createRootEpic from './rootEpic';
+import createIpcMiddleware from '../ipc/ipc.renderer';
 import { appRootService } from '../rootService.renderer';
 import { isDev } from '../env';
 
@@ -23,7 +25,7 @@ const composeEnhancers =
 
 export const history = createHashHistory();
 
-export const configuredStore = (initialState?: AppState) => {
+export function configuredStore(initialState?: AppState) {
   const rootReducer = createRootReducer(history);
   const rootEpic = createRootEpic();
 
@@ -36,7 +38,11 @@ export const configuredStore = (initialState?: AppState) => {
     dependencies: appRootService,
   });
 
-  const middlewares = [routerMiddleware(history), epicMiddleware];
+  const middlewares = [
+    routerMiddleware(history),
+    epicMiddleware,
+    createIpcMiddleware(ipcRenderer),
+  ];
 
   const store = createStore(
     rootReducer,
@@ -48,7 +54,7 @@ export const configuredStore = (initialState?: AppState) => {
   acceptReducerHMR(store);
 
   return store;
-};
+}
 
 function acceptReducerHMR<S extends Store>(store: S) {
   if (!module.hot || !isDev) return;

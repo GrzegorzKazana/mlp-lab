@@ -1,8 +1,6 @@
 import { unionize, UnionOf, ofType } from 'unionize';
-import { filter, first, map, switchMap } from 'rxjs/operators';
 
-import type { AppEpic } from '@/config/store.renderer/store';
-import { BackendAction } from '@/config/events.main/rootEvents.main';
+import { createIsAction } from '@/config/store.renderer/utils';
 
 export const name = 'counter';
 
@@ -31,17 +29,6 @@ export const reducer = (state = initialState, action: Action): State =>
     default: () => state,
   });
 
-export const selectCount: Selector<number> = ({ counter }) => counter.value;
+export const isCounterAction = createIsAction(Action);
 
-export const epic: AppEpic = (action$, _, { ipcService }) =>
-  action$.pipe(
-    filter(Action.is.RANDOM_REQUEST),
-    switchMap(() =>
-      ipcService
-        .publish(BackendAction.counter.RANDOM_REQUEST())
-        .pipe(
-          first(BackendAction.counter.is.RANDOM_GENERATED),
-          map(Action.RANDOM_RECEIVED)
-        )
-    )
-  );
+export const selectCount: Selector<number> = ({ counter }) => counter.value;

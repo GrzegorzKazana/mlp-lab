@@ -3,17 +3,17 @@ import { Subject, fromEvent } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import createRootEpic from '../events.main/rootEpic.main';
-import { BackendAction } from '../events.main/rootEvents.main';
+import { AppAction } from '../store.renderer/rootAction';
 import { backendRootService } from '../rootService.main';
 
 const PUBLISH_CHANNEL = 'app-action-main-to-renderer';
 const SUB_CHANNEL = 'app-action-renderer-to-main';
 
 export default function registerEpic(win: BrowserWindow) {
-  const ipcMainSubject = new Subject<BackendAction>();
+  const ipcMainSubject = new Subject<AppAction>();
   const rootEpic = createRootEpic();
 
-  fromEvent<[unknown, BackendAction]>(ipcMain, SUB_CHANNEL)
+  fromEvent<[unknown, AppAction]>(ipcMain, SUB_CHANNEL)
     .pipe(map(([, event]) => event))
     .subscribe(ipcMainSubject);
 

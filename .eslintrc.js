@@ -4,7 +4,9 @@ module.exports = {
     // A temporary hack related to IDE not resolving correct package.json
     'import/no-extraneous-dependencies': 'off',
     'prettier/prettier': 0,
-    '@typescript-eslint/no-use-before-define': 'off',
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
+    'import/prefer-default-export': 'off',
+    'class-methods-use-this': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

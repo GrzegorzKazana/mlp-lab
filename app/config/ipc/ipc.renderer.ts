@@ -1,25 +1,17 @@
 import { IpcRenderer } from 'electron';
-import { fromEvent, Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { Middleware } from 'redux';
 
-import { BackendAction } from '../events.main/rootEvents.main';
+const PUBLISH_CHANNEL = 'app-action-renderer-to-main';
+const SUB_CHANNEL = 'app-action-main-to-renderer';
 
-export default class IpcService {
-  private readonly PUBLISH_CHANNEL = 'app-action-renderer-to-main';
+export default function createIpcMiddleware(ipc: IpcRenderer): Middleware {
+  return ({ dispatch }) => {
+    ipc.on(SUB_CHANNEL, (_, action) => dispatch(action));
 
-  private readonly SUB_CHANNEL = 'app-action-main-to-renderer';
+    return next => action => {
+      ipc.send(PUBLISH_CHANNEL, action);
 
-  constructor(private ipc: IpcRenderer) {}
-
-  public publish(event: BackendAction): Observable<BackendAction> {
-    this.ipc.send(this.PUBLISH_CHANNEL, event);
-
-    return this.events();
-  }
-
-  private events(): Observable<BackendAction> {
-    return fromEvent<[unknown, BackendAction]>(this.ipc, this.SUB_CHANNEL).pipe(
-      map(([, event]) => event)
-    );
-  }
+      return next(action);
+    };
+  };
 }
