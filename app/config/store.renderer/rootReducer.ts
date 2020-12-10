@@ -9,12 +9,17 @@ import {
   reducer as dataReducer,
   name as dataName,
 } from '@/features/data-loader/store.renderer';
+import {
+  reducer as modelReducer,
+  name as modelName,
+} from '@/features/model-creator/store.renderer';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
     router: connectRouter(history),
     [counterName]: counterReducer,
     [dataName]: dataReducer,
+    [modelName]: modelReducer,
   });
 }
 

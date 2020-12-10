@@ -7,6 +7,7 @@ module.exports = {
     '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
     'import/prefer-default-export': 'off',
     'class-methods-use-this': 'off',
+    'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
   },
   parserOptions: {
     ecmaVersion: 2020,
