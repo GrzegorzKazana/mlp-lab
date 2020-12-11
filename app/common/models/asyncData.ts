@@ -26,6 +26,7 @@ export const AsyncData = {
     error,
   }),
 
+  getOr,
   map,
   match,
   is: {
@@ -91,11 +92,14 @@ function map<T, E = Error>(
   asyncData: AsyncData<T, E>,
   mapper: (data: T) => T
 ): AsyncData<T, E> {
-  return match(
-    asyncData,
-    {
-      LOADED: data => AsyncData.load(mapper(data)),
-    },
-    asyncData
-  );
+  return AsyncData.is.LOADED(asyncData)
+    ? AsyncData.load(mapper(asyncData.data))
+    : asyncData;
+}
+
+function getOr<T, D, E = Error>(
+  asyncData: AsyncData<T, E>,
+  defaultVal: D
+): T | D {
+  return AsyncData.is.LOADED(asyncData) ? asyncData.data : defaultVal;
 }

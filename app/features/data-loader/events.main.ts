@@ -1,5 +1,12 @@
-import { of } from 'rxjs';
-import { filter, switchMap, map, catchError } from 'rxjs/operators';
+import { of, merge } from 'rxjs';
+import {
+  filter,
+  switchMap,
+  map,
+  catchError,
+  mergeMap,
+  delay,
+} from 'rxjs/operators';
 
 import type { BackendEpic } from '@/config/events.main/rootEpic.main';
 
@@ -10,17 +17,25 @@ import { Action, isDataAction } from './store.renderer';
 export const epic: BackendEpic = (action$, { dataLoadingService }) =>
   action$.pipe(
     filter(isDataAction),
-    filter(Action.is.DATA_FILE_REQUEST_PROMPT),
+    filter(Action.is.DATA_PROMPT_REQUEST),
     switchMap(() =>
-      dataLoadingService.loadCsv().pipe(
-        map(data =>
-          data
-            ? Action.DATA_FILE_LOADED(data)
-            : Action.DATA_FILE_REQUEST_PROMPT_CANCEL()
-        ),
-        catchError(err =>
-          of(Action.DATA_FILE_ERROR(createFileSystemError(err)))
-        )
+      dataLoadingService.loadCsvMetaData().pipe(
+        mergeMap(metaData => {
+          if (!metaData) return of(Action.DATA_PROMPT_CANCEL());
+
+          const promptSubmit$ = of(Action.DATA_PROMPT_SUBMIT(metaData));
+
+          const data$ = dataLoadingService.readCsv(metaData.path).pipe(
+            map(Action.DATA_FILE_LOADED),
+            delay(1000),
+            catchError(err =>
+              of(Action.DATA_FILE_ERROR(createFileSystemError(err)))
+            )
+          );
+
+          return merge(promptSubmit$, data$);
+        }),
+        catchError(err => of(Action.DATA_PROMPT_ERROR(err)))
       )
     )
   );

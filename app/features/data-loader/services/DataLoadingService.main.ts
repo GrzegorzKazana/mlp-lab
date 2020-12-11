@@ -1,15 +1,13 @@
-import { Observable, from, of } from 'rxjs';
-import { map, mergeMap, reduce } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { map, reduce } from 'rxjs/operators';
 import { dialog, OpenDialogOptions } from 'electron';
 import fs from 'fs';
+import { basename } from 'path';
 import csv from 'csv-parser';
 
-import { head } from '@/common/utils';
+import { head, mapObject } from '@/common/utils';
 
-import { Data } from '../models';
-
-type CsvRow = Record<string, string>;
-type Csv = Array<CsvRow>;
+import { MetaData, CsvRow, Csv, Data, Attribute } from '../models';
 
 export default class DataLoadingService {
   private readonly csvDialogOptions: OpenDialogOptions = {
@@ -17,29 +15,59 @@ export default class DataLoadingService {
     filters: [{ name: 'csvFilter', extensions: ['csv'] }],
   };
 
-  public loadCsv(): Observable<{ filePath: string; data: Data } | null> {
+  public loadCsvMetaData(): Observable<MetaData | null> {
     const dialog$ = from(dialog.showOpenDialog(this.csvDialogOptions));
 
     return dialog$.pipe(
-      mergeMap(res => {
+      map(res => {
         const filePath = head(res.filePaths);
 
-        if (res.canceled || !filePath) return of(null);
+        if (res.canceled || !filePath) return null;
 
-        return this.readCsvFromFs(filePath).pipe(
-          map(data => ({ filePath, data }))
-        );
+        return {
+          name: basename(filePath),
+          path: filePath,
+        };
       })
     );
   }
 
+  public readCsv(path: string): Observable<Data> {
+    return this.readCsvFromFs(path).pipe(
+      map(rows => ({ attributes: DataLoadingService.getHeaders(rows), rows }))
+    );
+  }
+
   private readCsvFromFs(path: string): Observable<Csv> {
-    return new Observable<CsvRow>(observer => {
-      fs.createReadStream(path)
+    return new Observable<Record<string, string>>(observer => {
+      const stream = fs.createReadStream(path);
+
+      stream
         .pipe(csv())
+
         .on('data', chunk => observer.next(chunk))
         .on('error', err => observer.error(err))
         .on('end', () => observer.complete());
-    }).pipe(reduce((table, row) => [...table, row], [] as Csv));
+
+      return () => stream.close();
+    }).pipe(
+      reduce(
+        (table, row, index) => [
+          ...table,
+          DataLoadingService.parseRow(row, index),
+        ],
+        [] as Csv
+      )
+    );
+  }
+
+  private static getHeaders(data: Csv): Attribute[] {
+    const firstRow = head(data);
+
+    return firstRow ? Object.keys(firstRow).map(name => ({ name })) : [];
+  }
+
+  private static parseRow(row: Record<string, string>, index: number): CsvRow {
+    return { index, ...mapObject(row, Number.parseFloat) };
   }
 }
