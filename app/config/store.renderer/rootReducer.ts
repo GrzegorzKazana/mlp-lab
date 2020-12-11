@@ -13,6 +13,10 @@ import {
   reducer as modelReducer,
   name as modelName,
 } from '@/features/model-creator/store.renderer';
+import {
+  reducer as trainReducer,
+  name as trainName,
+} from '@/features/model-trainer/store.renderer';
 
 export default function createRootReducer(history: History) {
   return combineReducers({
@@ -20,6 +24,7 @@ export default function createRootReducer(history: History) {
     [counterName]: counterReducer,
     [dataName]: dataReducer,
     [modelName]: modelReducer,
+    [trainName]: trainReducer,
   });
 }
 

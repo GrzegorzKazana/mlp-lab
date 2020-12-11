@@ -28,7 +28,7 @@ export default function ModelCreator() {
       <button
         type="button"
         onClick={() =>
-          dispatch(Action.MODEL_ADD_LAYER({ numPerceptrons: layerSize }))
+          dispatch(Action.ADD_LAYER({ numPerceptrons: layerSize }))
         }
       >
         Add
