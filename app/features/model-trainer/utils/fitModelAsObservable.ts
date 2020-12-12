@@ -1,4 +1,4 @@
-import * as tf from '@tensorflow/tfjs';
+import type * as tf from '@tensorflow/tfjs';
 import { Observable, Subscriber } from 'rxjs';
 
 import { TrainingProgress } from '../models';

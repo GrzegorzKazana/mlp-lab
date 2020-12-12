@@ -1,5 +1,6 @@
-import { Observable } from 'rxjs';
-import * as tf from '@tensorflow/tfjs';
+import type * as tfLib from '@tensorflow/tfjs';
+import { Observable, defer } from 'rxjs';
+import { mergeMap, shareReplay } from 'rxjs/operators';
 
 import { Model } from '@/features/model-creator/models';
 import { Data } from '@/features/data-loader';
@@ -7,41 +8,60 @@ import { Data } from '@/features/data-loader';
 import { Training, TrainingProgress } from '../models';
 import { fitModelAsObservable } from '../utils';
 
+type TF = typeof tfLib;
+
 export class ModelService {
   private static readonly VALIDATION_SPLIT = 0.3;
 
   private static readonly BATCH_SIZE = 32;
 
-  private static readonly DEFAULT_LOSS: tf.ModelCompileArgs['loss'] = 'hinge';
+  private static readonly DEFAULT_LOSS: tfLib.ModelCompileArgs['loss'] =
+    'hinge';
 
-  private static readonly DEFAULT_OPTIMIZER: tf.ModelCompileArgs['optimizer'] =
+  private static readonly DEFAULT_OPTIMIZER: tfLib.ModelCompileArgs['optimizer'] =
     'adam';
+
+  /**
+   * Load tensorflow lazily - so it is skipped in initial bundle
+   * use `shareReplay` so first emission is reused upon subsequent subscriptions
+   */
+  private readonly tf = defer(() => import('@tensorflow/tfjs')).pipe(
+    shareReplay(1)
+  );
 
   public trainModel(
     definition: Model,
     training: Training,
     data: Data
   ): Observable<TrainingProgress> {
-    const model = this.buildModel(definition, training);
-    const [xs, ys] = this.createDataTensors(training, data);
+    return this.tf.pipe(
+      mergeMap(tf => {
+        const model = this.buildModel(tf, definition, training);
+        const [xs, ys] = this.createDataTensors(tf, training, data);
 
-    return fitModelAsObservable(
-      model,
-      xs,
-      ys,
-      {
-        epochs: training.epochs,
-        batchSize: ModelService.BATCH_SIZE,
-        validationSplit: ModelService.VALIDATION_SPLIT,
-      },
-      {
-        loss: ModelService.DEFAULT_LOSS,
-        optimizer: ModelService.DEFAULT_OPTIMIZER,
-      }
+        return fitModelAsObservable(
+          model,
+          xs,
+          ys,
+          {
+            epochs: training.epochs,
+            batchSize: ModelService.BATCH_SIZE,
+            validationSplit: ModelService.VALIDATION_SPLIT,
+          },
+          {
+            loss: ModelService.DEFAULT_LOSS,
+            optimizer: ModelService.DEFAULT_OPTIMIZER,
+          }
+        );
+      })
     );
   }
 
-  private buildModel(definition: Model, training: Training): tf.Sequential {
+  private buildModel(
+    tf: TF,
+    definition: Model,
+    training: Training
+  ): tfLib.Sequential {
     const hiddenLayers = definition.layers.map(({ numPerceptrons }, idx) => {
       const isFirstLayer = idx === 0;
 
@@ -59,9 +79,10 @@ export class ModelService {
   }
 
   private createDataTensors(
+    tf: TF,
     training: Training,
     data: Data
-  ): [tf.Tensor2D, tf.Tensor2D] {
+  ): [tfLib.Tensor2D, tfLib.Tensor2D] {
     const xs = data.rows.map(row =>
       training.inputAttributes.map(attr => row[attr])
     );
