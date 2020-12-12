@@ -3,7 +3,9 @@ import * as tf from '@tensorflow/tfjs';
 
 import { Model } from '@/features/model-creator/models';
 import { Data } from '@/features/data-loader';
+
 import { Training, TrainingProgress } from '../models';
+import { fitModelAsObservable } from '../utils';
 
 export class ModelService {
   private static readonly VALIDATION_SPLIT = 0.3;
@@ -23,7 +25,7 @@ export class ModelService {
     const model = this.buildModel(definition, training);
     const [xs, ys] = this.createDataTensors(training, data);
 
-    return this.fitModelAsObservable(
+    return fitModelAsObservable(
       model,
       xs,
       ys,
@@ -66,66 +68,5 @@ export class ModelService {
     const ys = data.rows.map(row => [row[training.targetAttribute]]);
 
     return [tf.tensor2d(xs), tf.tensor2d(ys)];
-  }
-
-  private fitModelAsObservable(
-    model: tf.Sequential,
-    xs: tf.Tensor2D,
-    ys: tf.Tensor2D,
-    fitOpts: tf.ModelFitArgs &
-      Required<
-        Pick<tf.ModelFitArgs, 'epochs' | 'batchSize' | 'validationSplit'>
-      >,
-    compileOpts: tf.ModelCompileArgs
-  ): Observable<TrainingProgress> {
-    const numberOfBatchesPerEpoch = Math.ceil(
-      ((1 - fitOpts.validationSplit) * xs.shape[0]) / fitOpts.batchSize
-    );
-    const numberOfBatches = numberOfBatchesPerEpoch * fitOpts.epochs;
-
-    let currentEpoch = 0;
-
-    return new Observable(observer => {
-      const args: tf.ModelFitArgs = {
-        ...fitOpts,
-        callbacks: {
-          onBatchEnd: batchNumber => {
-            const progress =
-              (currentEpoch * numberOfBatchesPerEpoch + batchNumber + 1) /
-              numberOfBatches;
-
-            observer.next({
-              completed: false,
-              progress: { value: progress },
-            });
-          },
-          onEpochEnd: epochNumber => {
-            currentEpoch += 1;
-            const progress = (epochNumber + 1) / fitOpts.epochs;
-
-            observer.next({
-              completed: false,
-              progress: { value: progress },
-            });
-          },
-        },
-      };
-
-      model.compile(compileOpts);
-
-      model
-        .fit(xs, ys, args)
-        .then(logs => {
-          observer.next({ completed: true, metrics: logs });
-
-          return observer.complete();
-        })
-        .catch(err => observer.error(err));
-
-      return () => {
-        // stops training after finishing current batch
-        model.stopTraining = true;
-      };
-    });
   }
 }

@@ -1,7 +1,7 @@
+import type * as tf from '@tensorflow/tfjs';
+
 import { AttributeName, MetaData } from '@/features/data-loader';
 import { Model } from '@/features/model-creator';
-
-export type Sth = unknown;
 
 export type Training = {
   epochs: number;
@@ -10,7 +10,7 @@ export type Training = {
 };
 
 export type Progress = { value: number };
-export type Metrics = unknown;
+export type Metrics = tf.History;
 
 export type TrainingProgress =
   | {

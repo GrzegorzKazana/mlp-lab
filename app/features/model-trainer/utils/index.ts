@@ -1,0 +1,1 @@
+export { fitModelAsObservable } from './fitModelAsObservable';
