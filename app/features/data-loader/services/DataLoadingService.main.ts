@@ -7,9 +7,16 @@ import csv from 'csv-parser';
 
 import { head, mapObject } from '@/common/utils';
 
-import { MetaData, CsvRow, Csv, Data, Attribute } from '../models';
+import {
+  MetaData,
+  CsvRow,
+  Csv,
+  Data,
+  Attribute,
+  indexColumnName,
+} from '../models';
 
-export default class DataLoadingService {
+export class DataLoadingService {
   private readonly csvDialogOptions: OpenDialogOptions = {
     properties: ['openFile'],
     filters: [{ name: 'csvFilter', extensions: ['csv'] }],
@@ -68,6 +75,6 @@ export default class DataLoadingService {
   }
 
   private static parseRow(row: Record<string, string>, index: number): CsvRow {
-    return { index, ...mapObject(row, Number.parseFloat) };
+    return { [indexColumnName]: index, ...mapObject(row, Number.parseFloat) };
   }
 }

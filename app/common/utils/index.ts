@@ -1,4 +1,7 @@
 export const head = <T>(arr: T[]): T | undefined => arr[0];
+export const last = <T>(arr: T[]): T | undefined => arr[arr.length - 1];
+export const init = <T>(arr: T[]): T[] => arr.slice(0, arr.length - 1);
+export const tail = <T>(arr: T[]): T[] => arr.slice(1);
 
 export const mapObject = <R extends Record<string, unknown>, T>(
   obj: R,
@@ -11,3 +14,6 @@ export const mapObject = <R extends Record<string, unknown>, T>(
     },
     {} as { [K in keyof R]: T }
   );
+
+export const noop = () => {};
+export const identity = <T>(a: T): T => a;

@@ -13,6 +13,7 @@ type Props = {
 const useStyles = makeStyles({
   header: {
     padding: '16px',
+    flexShrink: 0,
   },
   headerFilePath: {
     fontStyle: 'italic',

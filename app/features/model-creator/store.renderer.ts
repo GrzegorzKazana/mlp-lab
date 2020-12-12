@@ -1,4 +1,5 @@
 import { unionize, UnionOf, ofType } from 'unionize';
+import { flow } from 'fp-ts/es6/function';
 
 import { createIsAction } from '@/config/store.renderer/utils';
 
@@ -29,4 +30,12 @@ export const reducer = (state = initialState, action: Action): State =>
 
 export const isModelAction = createIsAction(Action);
 
-export const modelSelector: Selector<Model> = state => state[name];
+export const stateSelector: Selector<Model> = state => state[name];
+export const isModelValidSelector: Selector<boolean> = flow(
+  stateSelector,
+  ({ layers }) => layers.length > 0
+);
+export const modelSelector: Selector<Model | null> = flow(
+  stateSelector,
+  model => (model.layers.length > 0 ? model : null)
+);

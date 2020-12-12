@@ -1,10 +1,10 @@
 import * as tf from '@tensorflow/tfjs';
 
 import { Model } from '@/features/model-creator/models';
-import { Data } from '@/features/data-loader/models';
+import { Data } from '@/features/data-loader';
 import { Traning } from '../models';
 
-export default class ModelService {
+export class ModelService {
   public trainModel(definition: Model, training: Traning, data: Data) {
     const model = this.buildModel(definition);
 

@@ -30,6 +30,7 @@ const useStyles = makeStyles(() => ({
     flexGrow: 1,
     minHeight: 0,
     display: 'flex',
+    flexDirection: 'column',
   },
 }));
 

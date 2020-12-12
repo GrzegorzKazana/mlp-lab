@@ -15,6 +15,10 @@ const LazyModelCreatorPage = React.lazy(() =>
   import('../../features/model-creator/ModelCreator')
 );
 
+const LazyTrainingPage = React.lazy(() =>
+  import('../../features/model-trainer/ModelTrainer')
+);
+
 export default function Routes() {
   return (
     <App>
@@ -22,6 +26,7 @@ export default function Routes() {
         <Switch>
           <Route path={routes.DATA} component={LazyDataPage} />
           <Route path={routes.MODEL} component={LazyModelCreatorPage} />
+          <Route path={routes.TRAINING} component={LazyTrainingPage} />
           <Route path="/" render={() => <Redirect to={routes.DATA} />} />
         </Switch>
       </React.Suspense>

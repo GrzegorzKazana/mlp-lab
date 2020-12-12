@@ -10,7 +10,7 @@ export const LoadDataButton: React.FC<Props> = ({ onClick }) => {
   return (
     <Button
       variant="contained"
-      color="secondary"
+      color="primary"
       startIcon={<FolderOpen />}
       onClick={onClick}
     >

@@ -15,9 +15,13 @@ const useStyles = makeStyles(() => ({
   tablePagination: {
     flexShrink: 0,
   },
-  content: {
+  container: {
+    minHeight: 0,
     flexGrow: 1,
     overflow: 'auto',
+  },
+  content: {
+    flexGrow: 1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -37,6 +41,7 @@ export const DataPreview: React.FC<Props> = ({
       direction="column"
       justify="flex-start"
       alignItems="stretch"
+      className={classes.container}
     >
       <DataDescriptionHeader
         metaData={metaData}

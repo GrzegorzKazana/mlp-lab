@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Action, modelSelector } from './store.renderer';
+import { Action, stateSelector } from './store.renderer';
 
 export default function ModelCreator() {
   const dispatch = useDispatch();
-  const model = useSelector(modelSelector);
+  const model = useSelector(stateSelector);
 
   const [layerSize, setLayerSize] = useState(10);
 

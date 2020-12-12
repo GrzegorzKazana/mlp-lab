@@ -1,11 +1,12 @@
 import { unionize, UnionOf, ofType } from 'unionize';
-import { filter, map, withLatestFrom } from 'rxjs/operators';
+import { of, EMPTY } from 'rxjs';
+import { filter, map, mergeMap, withLatestFrom } from 'rxjs/operators';
 
 import { createIsAction } from '@/config/store.renderer/utils';
 import type { AppEpic } from '@/config/store.renderer/rootEpic';
 
-import { Model } from '@/features/model-creator/models';
-import { modelSelector } from '@/features/model-creator/store.renderer';
+import { Data, dataSelector } from '@/features/data-loader';
+import { Model, modelSelector } from '@/features/model-creator';
 
 import { Traning } from './models';
 
@@ -16,7 +17,11 @@ const initialState = {};
 export const Action = unionize(
   {
     TRAIN_REQUEST: ofType<Traning>(),
-    TRAIN_MODEL_START: ofType<{ training: Traning; model: Model }>(),
+    TRAIN_MODEL_START: ofType<{
+      training: Traning;
+      model: Model;
+      data: Data;
+    }>(),
   },
   { tag: 'type' }
 );
@@ -37,8 +42,12 @@ export const epic: AppEpic = (action$, state$) =>
     filter(isTrainingAction),
     filter(Action.is.TRAIN_REQUEST),
     withLatestFrom(state$),
-    map(([training, state]) => ({ training, model: modelSelector(state) })),
+    mergeMap(([training, state]) => {
+      console.warn([training, state]);
+      const model = modelSelector(state);
+      const data = dataSelector(state);
+
+      return model && data ? of({ training, model, data }) : EMPTY;
+    }),
     map(Action.TRAIN_MODEL_START)
   );
-
-// export const modelSelector: Selector<Model> = state => state[name];
