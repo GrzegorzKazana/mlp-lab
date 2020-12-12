@@ -18,7 +18,7 @@ import { makeStyles } from '@material-ui/styles';
 import { init, last } from '@/common/utils';
 import { AttributeName } from '@/features/data-loader';
 
-import { Traning } from '../models';
+import { Training } from '../models';
 
 const useStyles = makeStyles({
   form: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles({
 
 type Props = {
   dataAttributes: Array<AttributeName>;
-  onSubmit: (training: Traning) => void;
+  onSubmit: (training: Training) => void;
 };
 
 export const TrainingForm: React.FC<Props> = ({ dataAttributes, onSubmit }) => {

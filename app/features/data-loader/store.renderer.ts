@@ -1,9 +1,9 @@
 import { unionize, UnionOf, ofType } from 'unionize';
 import { flow } from 'fp-ts/es6/function';
 
-import { createIsAction } from '@/config/store.renderer/utils';
 import { AppError } from '@/common/errors';
 import { identity } from '@/common/utils';
+import { createIsAction } from '@/config/store.renderer/utils';
 
 import { AttributeName, Data, MetaData, indexColumnName } from './models';
 
@@ -53,9 +53,12 @@ export const isDataLoadedSelector: Selector<boolean> = flow(
   stateSelector,
   State.is.LOADED
 );
-export const dataSelector: Selector<Data | null> = flow(
+export const dataSelector: Selector<{
+  meta: MetaData;
+  data: Data;
+} | null> = flow(
   stateSelector,
-  State.match({ LOADED: ({ data }) => data, default: () => null })
+  State.match({ LOADED: identity, default: () => null })
 );
 export const dataAttributeNamesSelector: Selector<AttributeName[]> = flow(
   stateSelector,

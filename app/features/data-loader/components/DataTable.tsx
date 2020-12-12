@@ -50,7 +50,7 @@ export const DataTable: React.FC<{ data: Data }> = ({ data }) => {
               <TableRow key={row.index}>
                 {data.attributes.map(({ name }) => (
                   <TableCell key={name} align="center">
-                    {row[name]}
+                    {String(row[name])}
                   </TableCell>
                 ))}
               </TableRow>

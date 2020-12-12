@@ -2,6 +2,8 @@
 
 const developmentEnvironments = ['development', 'test'];
 
+const transpileDependencies = ['fp-ts/es6'];
+
 const developmentPlugins = [
   require('react-hot-loader/babel'),
   require('@babel/plugin-transform-runtime'),
@@ -22,6 +24,9 @@ module.exports = api => {
   const development = api.env(developmentEnvironments);
 
   return {
+    exclude: new RegExp(
+      `node_modules/(?!(${transpileDependencies.join('|')})/).*`
+    ),
     presets: [
       // @babel/preset-env will automatically target our browserslist targets
       require('@babel/preset-env'),

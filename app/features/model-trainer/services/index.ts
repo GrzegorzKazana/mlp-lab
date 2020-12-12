@@ -1,1 +1,1 @@
-export { ModelService } from './ModelService.main';
+export { ModelService } from './ModelService';
