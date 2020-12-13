@@ -1,7 +1,7 @@
-import { Observable, from } from 'rxjs';
-import { map, reduce } from 'rxjs/operators';
-import { dialog, OpenDialogOptions } from 'electron';
 import fs from 'fs';
+import { Observable, from } from 'rxjs';
+import { map, toArray } from 'rxjs/operators';
+import { dialog, OpenDialogOptions } from 'electron';
 import { basename } from 'path';
 import csv from 'csv-parser';
 
@@ -51,20 +51,14 @@ export class DataLoadingService {
 
       stream
         .pipe(csv())
-
         .on('data', chunk => observer.next(chunk))
         .on('error', err => observer.error(err))
         .on('end', () => observer.complete());
 
       return () => stream.close();
     }).pipe(
-      reduce(
-        (table, row, index) => [
-          ...table,
-          DataLoadingService.parseRow(row, index),
-        ],
-        [] as Csv
-      )
+      toArray(),
+      map(rows => rows.map(DataLoadingService.parseRow))
     );
   }
 
