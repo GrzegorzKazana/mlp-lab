@@ -21,3 +21,25 @@ export const identity = <T>(a: T): T => a;
 export const inNullable = <T>(val: T | null | undefined): val is T =>
   val !== null && val !== undefined;
 export const isNumber = (a: unknown): a is number => typeof a === 'number';
+
+export const swapWithPrevious = <T>(arr: T[], pred: (a: T) => boolean): T[] => {
+  const idx = arr.findIndex(pred);
+
+  if (idx === -1 || idx === 0) return arr;
+
+  const arrInit = arr.slice(0, idx - 1);
+  const arrTail = arr.slice(idx + 1);
+
+  return [...arrInit, arr[idx], arr[idx - 1], ...arrTail];
+};
+
+export const swapWithNext = <T>(arr: T[], pred: (a: T) => boolean): T[] => {
+  const idx = arr.findIndex(pred);
+
+  if (idx === -1 || idx === arr.length - 1) return arr;
+
+  const arrInit = arr.slice(0, idx);
+  const arrTail = arr.slice(idx + 2);
+
+  return [...arrInit, arr[idx + 1], arr[idx], ...arrTail];
+};

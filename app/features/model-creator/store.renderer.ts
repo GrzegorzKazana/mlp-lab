@@ -13,7 +13,10 @@ const initialState: Model = {
 
 export const Action = unionize(
   {
-    MODEL_ADD_LAYER: ofType<Omit<Layer, 'id'>>(),
+    MODEL_ADD_LAYER: ofType<Layer>(),
+    MODEL_REMOVE_LAYER: ofType<Layer>(),
+    MODEL_MOVE_LAYER_UP: ofType<Layer>(),
+    MODEL_MOVE_LAYER_DOWN: ofType<Layer>(),
   },
   { tag: 'type' }
 );
@@ -25,6 +28,9 @@ type Selector<T> = (state: { [name]: State }) => T;
 export const reducer = (state = initialState, action: Action): State =>
   Action.match(action, {
     MODEL_ADD_LAYER: layer => Model.addLayer(state, layer),
+    MODEL_REMOVE_LAYER: layer => Model.removeLayer(state, layer),
+    MODEL_MOVE_LAYER_UP: layer => Model.moveLayerUp(state, layer),
+    MODEL_MOVE_LAYER_DOWN: layer => Model.moveLayerDown(state, layer),
     default: () => state,
   });
 
