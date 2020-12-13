@@ -17,3 +17,7 @@ export const mapObject = <R extends Record<string, unknown>, T>(
 
 export const noop = () => {};
 export const identity = <T>(a: T): T => a;
+
+export const inNullable = <T>(val: T | null | undefined): val is T =>
+  val !== null && val !== undefined;
+export const isNumber = (a: unknown): a is number => typeof a === 'number';
