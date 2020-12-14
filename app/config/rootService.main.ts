@@ -1,9 +1,9 @@
 import { DatasetService } from '@/features/data-loader/services/DatasetService.main';
 
-const dataLoadingService = new DatasetService();
+const datasetService = new DatasetService();
 
 export const backendRootService = {
-  dataLoadingService,
+  datasetService,
 };
 
 export type BackendRootService = typeof backendRootService;

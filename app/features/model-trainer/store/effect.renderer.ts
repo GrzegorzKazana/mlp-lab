@@ -11,12 +11,13 @@ import {
 import type { AppEpic } from '@/config/store.renderer/rootEpic';
 import { createUnknownError } from '@/common/errors';
 
-import { Selectors as DataSelectors } from '@/features/data-loader';
-import { Selectors } from '@/features/model-creator';
-
 import { Action, isTrainingAction } from './actions';
 
-export const epic: AppEpic = (action$, state$, { modelService }) => {
+export const epic: AppEpic = (
+  action$,
+  state$,
+  { services: { modelService }, selectors }
+) => {
   const trainingAction$ = action$.pipe(filter(isTrainingAction));
   const trainReq$ = trainingAction$.pipe(filter(Action.is.TRAIN_MODEL_REQUEST));
   const trainCancel$ = trainingAction$.pipe(
@@ -26,8 +27,8 @@ export const epic: AppEpic = (action$, state$, { modelService }) => {
   return trainReq$.pipe(
     withLatestFrom(state$),
     exhaustMap(([training, state]) => {
-      const model = Selectors.modelSelector(state);
-      const dataset = DataSelectors.dataSelector(state);
+      const model = selectors.model.modelSelector(state);
+      const dataset = selectors.data.dataSelector(state);
 
       if (!model || !dataset) return EMPTY;
 

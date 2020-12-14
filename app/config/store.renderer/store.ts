@@ -11,6 +11,7 @@ import type { AppAction } from './rootAction';
 import type { AppState } from './rootReducer';
 import type { AppEpic } from './rootEpic';
 
+import { appSelectors, AppSelectors } from './selectors';
 import createRootReducer from './rootReducer';
 import createRootEpic from './rootEpic';
 import createIpcMiddleware from '../ipc/ipc.renderer';
@@ -33,9 +34,9 @@ export function configuredStore(initialState?: AppState) {
     AppAction,
     AppAction,
     AppState,
-    AppRootService
+    { services: AppRootService; selectors: AppSelectors }
   >({
-    dependencies: appRootService,
+    dependencies: { services: appRootService, selectors: appSelectors },
   });
 
   const middlewares = [

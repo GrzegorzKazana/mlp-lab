@@ -43,3 +43,9 @@ export const swapWithNext = <T>(arr: T[], pred: (a: T) => boolean): T[] => {
 
   return [...arrInit, arr[idx + 1], arr[idx], ...arrTail];
 };
+
+export const zip = <T, R>(arrA: T[], arrB: R[]): Array<[T, R]> => {
+  const length = Math.min(arrA.length, arrB.length);
+
+  return [...new Array(length).keys()].map(idx => [arrA[idx], arrB[idx]]);
+};

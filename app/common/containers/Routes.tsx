@@ -1,6 +1,9 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { LinearProgress } from '@material-ui/core';
+
 import routes from '@/config/routes';
+
 import App from './App';
 
 const LazyDataPage = React.lazy(() =>
@@ -18,7 +21,7 @@ const LazyTrainingPage = React.lazy(() =>
 export default function Routes() {
   return (
     <App>
-      <React.Suspense fallback={<h1>Loading...</h1>}>
+      <React.Suspense fallback={<LinearProgress />}>
         <Switch>
           <Route path={routes.DATA} component={LazyDataPage} />
           <Route path={routes.MODEL} component={LazyModelCreatorPage} />
