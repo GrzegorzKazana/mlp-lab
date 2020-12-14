@@ -13,6 +13,7 @@ module.exports = {
     'react/prop-types': 'off',
     // makes render prop pattern painful
     'react/display-name': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

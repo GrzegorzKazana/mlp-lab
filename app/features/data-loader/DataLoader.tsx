@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { LoadDataButton } from './components';
 import { DataPreview } from './containers';
-import { Action, State, stateSelector } from './store.renderer';
+import { Action, State, Selectors } from './store';
 
 const useStyles = makeStyles(() => ({
   centered: {
@@ -21,7 +21,7 @@ const useStyles = makeStyles(() => ({
 export default function DataLoader() {
   const dispatch = useDispatch();
   const styles = useStyles();
-  const state = useSelector(stateSelector);
+  const state = useSelector(Selectors.stateSelector);
 
   const requestData = () => dispatch(Action.DATA_PROMPT_REQUEST());
 

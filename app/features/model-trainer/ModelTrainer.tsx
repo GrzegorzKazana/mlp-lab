@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Grid, Dialog } from '@material-ui/core';
 
-import { dataAttributeNamesSelector } from '@/features/data-loader';
+import { Selectors as DataSelectors } from '@/features/data-loader';
 
 import {
   TrainginProgressDialogContent,
@@ -10,13 +10,13 @@ import {
 } from './components';
 import { TrainingTabs } from './containers';
 import { Training } from './models';
-import { Action, State, stateSelector } from './store.renderer';
+import { Action, State, Selectors } from './store';
 
 export default function ModelCreator() {
   const dispatch = useDispatch();
 
-  const state = useSelector(stateSelector);
-  const dataAttributes = useSelector(dataAttributeNamesSelector);
+  const state = useSelector(Selectors.stateSelector);
+  const dataAttributes = useSelector(DataSelectors.dataAttributeNamesSelector);
 
   const isDialogOpen = State.is.TRAINING(state) || State.is.ERROR(state);
 

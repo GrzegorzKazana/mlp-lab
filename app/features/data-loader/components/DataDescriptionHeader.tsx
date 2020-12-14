@@ -3,10 +3,10 @@ import { Grid, Box, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import { LoadDataButton } from './LoadDataButton';
-import { MetaData } from '../models';
+import { DatasetMetaData } from '../models';
 
 type Props = {
-  metaData: MetaData;
+  metaData: DatasetMetaData;
   onDataRequest: () => void;
 };
 

@@ -3,11 +3,11 @@ import { Grid, Divider, CircularProgress, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import { DataDescriptionHeader, DataTable } from '../components';
-import { MetaData, Data } from '../models';
+import { DatasetMetaData, Dataset } from '../models';
 
 type Props = {
-  metaData: MetaData;
-  data?: Data;
+  metaData: DatasetMetaData;
+  data?: Dataset;
   onDataRequest: () => void;
 };
 

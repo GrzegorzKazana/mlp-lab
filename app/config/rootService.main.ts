@@ -1,6 +1,6 @@
-import { DataLoadingService } from '@/features/data-loader/services/DataLoadingService.main';
+import { DatasetService } from '@/features/data-loader/services/DatasetService.main';
 
-const dataLoadingService = new DataLoadingService();
+const dataLoadingService = new DatasetService();
 
 export const backendRootService = {
   dataLoadingService,

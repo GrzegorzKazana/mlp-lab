@@ -3,7 +3,7 @@ import { Observable, defer } from 'rxjs';
 import { mergeMap, shareReplay } from 'rxjs/operators';
 
 import { Model } from '@/features/model-creator/models';
-import { Data } from '@/features/data-loader';
+import { Dataset } from '@/features/data-loader';
 
 import { Training, TrainingProgress } from '../models';
 import { fitModelAsObservable } from '../utils';
@@ -12,12 +12,9 @@ type TF = typeof tfLib;
 
 export class ModelService {
   private static readonly VALIDATION_SPLIT = 0.3;
-
   private static readonly BATCH_SIZE = 32;
-
   private static readonly DEFAULT_LOSS: tfLib.ModelCompileArgs['loss'] =
     'hinge';
-
   private static readonly DEFAULT_OPTIMIZER: tfLib.ModelCompileArgs['optimizer'] =
     'adam';
 
@@ -32,7 +29,7 @@ export class ModelService {
   public trainModel(
     definition: Model,
     training: Training,
-    data: Data
+    data: Dataset
   ): Observable<TrainingProgress> {
     return this.tf.pipe(
       mergeMap(tf => {
@@ -81,7 +78,7 @@ export class ModelService {
   private createDataTensors(
     tf: TF,
     training: Training,
-    data: Data
+    data: Dataset
   ): [tfLib.Tensor2D, tfLib.Tensor2D] {
     const xs = data.rows.map(row =>
       training.inputAttributes.map(attr => row[attr])

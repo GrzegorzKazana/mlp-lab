@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/styles';
 
 import { usePaginatedData } from '@/common/hooks';
 
-import { Data } from '../models';
+import { Dataset } from '../models';
 
 const useStyles = makeStyles({
   container: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
 
 const TABLE_PAGE_SIZE = 25;
 
-export const DataTable: React.FC<{ data: Data }> = ({ data }) => {
+export const DataTable: React.FC<{ data: Dataset }> = ({ data }) => {
   const classes = useStyles();
   const { currentData, currentPage, changePage } = usePaginatedData(data.rows, {
     pageSize: TABLE_PAGE_SIZE,

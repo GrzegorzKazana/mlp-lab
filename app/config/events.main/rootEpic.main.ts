@@ -1,7 +1,6 @@
 import { Observable, merge } from 'rxjs';
 
-import { epic as counterEpic } from '@/features/counter/events.main';
-import { epic as dataLoaderEpic } from '@/features/data-loader/events.main';
+import { backendEpic as dataLoaderEpic } from '@/features/data-loader/store';
 
 import type { AppAction } from '../store.renderer/rootAction';
 import type { BackendRootService } from '../rootService.main';
@@ -11,7 +10,7 @@ export type BackendEpic = (
   service: BackendRootService
 ) => Observable<AppAction>;
 
-const epics = [counterEpic, dataLoaderEpic];
+const epics = [dataLoaderEpic];
 
 export default function createRootEpic(): BackendEpic {
   return (action$, service) => merge(...epics.map(e => e(action$, service)));

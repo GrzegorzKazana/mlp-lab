@@ -12,7 +12,7 @@ import type { BackendEpic } from '@/config/events.main/rootEpic.main';
 
 import { createFileSystemError } from '@/common/errors';
 
-import { Action, isDataAction } from './store.renderer';
+import { Action, isDataAction } from './actions';
 
 export const epic: BackendEpic = (action$, { dataLoadingService }) =>
   action$.pipe(

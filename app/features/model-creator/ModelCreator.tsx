@@ -5,11 +5,11 @@ import { Typography, Grid } from '@material-ui/core';
 import { LayerCard } from './components';
 import { LayerForm } from './containers';
 import { Layer } from './models';
-import { Action, stateSelector } from './store.renderer';
+import { Action, Selectors } from './store';
 
 export default function ModelCreator() {
   const dispatch = useDispatch();
-  const model = useSelector(stateSelector);
+  const model = useSelector(Selectors.stateSelector);
 
   const addLayer = (layer: Layer) => dispatch(Action.MODEL_ADD_LAYER(layer));
 

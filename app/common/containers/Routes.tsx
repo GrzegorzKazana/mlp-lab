@@ -3,10 +3,6 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import routes from '@/config/routes';
 import App from './App';
 
-const LazyCounterPage = React.lazy(() =>
-  import('../../features/counter/Counter')
-);
-
 const LazyDataPage = React.lazy(() =>
   import('../../features/data-loader/DataLoader')
 );
