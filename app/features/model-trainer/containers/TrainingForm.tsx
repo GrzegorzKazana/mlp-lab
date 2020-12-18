@@ -1,24 +1,14 @@
-import React, { useState } from 'react';
-import {
-  Select,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Checkbox,
-  ListItemText,
-  Input,
-  Chip,
-  Button,
-  Box,
-} from '@material-ui/core';
+import React from 'react';
+import { FormControl, InputLabel, Button, Box } from '@material-ui/core';
 import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 
-import { init, last } from '@/common/utils';
 import { NumberField } from '@/common/components';
 import { AttributeName } from '@/features/data-loader';
 
 import { Training } from '../models';
+import { AttributeMultiSelect, AttributeSingleSelect } from '../components';
+import { useTrainingFormState } from '../hooks';
 
 const useStyles = makeStyles({
   form: {
@@ -27,13 +17,6 @@ const useStyles = makeStyles({
   },
   formControl: {
     minWidth: '120px',
-  },
-  chips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  chip: {
-    margin: 2,
   },
   submit: {
     display: 'flex',
@@ -49,15 +32,15 @@ type Props = {
 
 export const TrainingForm: React.FC<Props> = ({ dataAttributes, onSubmit }) => {
   const classes = useStyles();
-  const [inputAttributes, setInputAttributes] = useState<AttributeName[]>(() =>
-    init(dataAttributes)
-  );
-  const [targetAttribute, setTargetAttribute] = useState<AttributeName>(
-    () =>
-      // TODO: guarantee that loaded data is not empty
-      last(dataAttributes) || ''
-  );
-  const [epochs, setEpochs] = useState(10);
+
+  const {
+    epochs,
+    inputAttributes,
+    targetAttribute,
+    setEpochs,
+    setInputAttributes,
+    setTargetAttribute,
+  } = useTrainingFormState(dataAttributes);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -73,49 +56,26 @@ export const TrainingForm: React.FC<Props> = ({ dataAttributes, onSubmit }) => {
     <form className={classes.form} onSubmit={handleSubmit}>
       <FormControl fullWidth margin="normal">
         <InputLabel htmlFor="input-attrs">Input attributes</InputLabel>
-        <Select
+        <AttributeMultiSelect
           id="input-attrs"
-          multiple
-          input={<Input />}
-          placeholder="Select attributes..."
-          value={inputAttributes}
-          onChange={({ target }) =>
-            setInputAttributes(target.value as string[])
-          }
-          renderValue={selected => (
-            <div className={classes.chips}>
-              {(selected as string[]).map(value => (
-                <Chip key={value} label={value} className={classes.chip} />
-              ))}
-            </div>
-          )}
-        >
-          {dataAttributes.map(attribute => (
-            <MenuItem key={attribute} value={attribute}>
-              <Checkbox checked={inputAttributes.includes(attribute)} />
-              <ListItemText primary={attribute} />
-            </MenuItem>
-          ))}
-        </Select>
+          required
+          error={inputAttributes.length === 0}
+          attributes={dataAttributes}
+          selectedAttributes={inputAttributes}
+          onChange={setInputAttributes}
+        />
       </FormControl>
 
       <FormControl fullWidth margin="normal">
         <InputLabel htmlFor="target-attr">Target attribute</InputLabel>
-        <Select
+        <AttributeSingleSelect
           id="target-attr"
-          input={<Input />}
-          value={targetAttribute}
-          onChange={({ target }) => setTargetAttribute(target.value as string)}
-          renderValue={selected => (
-            <Chip label={selected as string} className={classes.chip} />
-          )}
-        >
-          {dataAttributes.map(attribute => (
-            <MenuItem key={attribute} value={attribute}>
-              <ListItemText primary={attribute} />
-            </MenuItem>
-          ))}
-        </Select>
+          required
+          error={!targetAttribute}
+          attributes={dataAttributes}
+          selectedAttribute={targetAttribute}
+          onChange={setTargetAttribute}
+        />
       </FormControl>
 
       <FormControl fullWidth margin="normal">
