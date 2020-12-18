@@ -7,7 +7,7 @@ import routes from '@/config/routes';
 const steps = [
   { label: 'Data', route: routes.DATA },
   { label: 'Model', route: routes.MODEL },
-  { label: 'Training', route: routes.TRAINING },
+  { label: 'Training', route: routes.createTrainingHistoryEntryUrl() },
 ];
 
 export default function NavBar() {

@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Tabs, Tab, Theme } from '@material-ui/core';
+import { useParams, useHistory } from 'react-router';
 import { makeStyles } from '@material-ui/styles';
 
-import { useTabs } from '@/common/hooks';
+import routes from '@/config/routes';
 import { AttributeName } from '@/features/data-loader';
 
-import { Training, TrainingHistoryEntry } from '../models';
+import {
+  Training,
+  TrainingHistoryEntry,
+  TrainingHistoryEntryId,
+} from '../models';
 import { TrainingForm } from './TrainingForm';
 import { TrainingSummary } from '../components';
 
@@ -17,34 +22,47 @@ const useStyles = makeStyles<Theme>(theme => ({
 }));
 
 type Props = {
-  history: TrainingHistoryEntry[];
+  trainingHistory: TrainingHistoryEntry[];
   dataAttributes: AttributeName[];
   handleTrainingFormSubmit: (traingin: Training) => void;
 };
 
+const SCHEDULE_TRAINING_TAB_KEY = 'training-tab';
+
 export const TrainingTabs: React.FC<Props> = ({
-  history,
+  trainingHistory,
   dataAttributes,
   handleTrainingFormSubmit,
 }) => {
   const classes = useStyles();
-  const { currentTab, setCurrentTab, renderTab } = useTabs();
+  const history = useHistory();
+  const { historyEntryId } = useParams<{
+    historyEntryId?: TrainingHistoryEntryId;
+  }>();
+
+  const selectedEntryId = useMemo(
+    () =>
+      historyEntryId && trainingHistory.find(({ id }) => id === historyEntryId)
+        ? historyEntryId
+        : SCHEDULE_TRAINING_TAB_KEY,
+    [historyEntryId, trainingHistory]
+  );
+
+  const navigateToTab = (id: TrainingHistoryEntryId) =>
+    history.push(routes.createTrainingHistoryEntryUrl(id));
 
   const tabs = [
-    <Tab key="training-tab" label="Schedule training" />,
-    ...history.map((entry, idx) => (
-      <Tab key={entry.timestamp} label={`History #${history.length - idx}`} />
-    )),
-  ];
-
-  const tabsContents = [
-    <TrainingForm
-      key="training-form"
-      dataAttributes={dataAttributes}
-      onSubmit={handleTrainingFormSubmit}
+    <Tab
+      key="training-tab"
+      label="Schedule training"
+      value={SCHEDULE_TRAINING_TAB_KEY}
     />,
-    ...history.map(entry => (
-      <TrainingSummary key={entry.timestamp} entry={entry} />
+    ...trainingHistory.map((entry, idx) => (
+      <Tab
+        key={entry.timestamp}
+        label={`History #${trainingHistory.length - idx}`}
+        value={entry.id}
+      />
     )),
   ];
 
@@ -53,14 +71,23 @@ export const TrainingTabs: React.FC<Props> = ({
       <Tabs
         orientation="vertical"
         variant="scrollable"
-        value={currentTab}
-        onChange={(_, tab) => setCurrentTab(tab)}
-        aria-label="Vertical tabs example"
+        value={selectedEntryId}
+        onChange={(_, tab) => navigateToTab(tab)}
         className={classes.tabs}
       >
         {tabs}
       </Tabs>
-      {tabsContents.map((content, idx) => renderTab(idx, content))}
+      {selectedEntryId === SCHEDULE_TRAINING_TAB_KEY && (
+        <TrainingForm
+          dataAttributes={dataAttributes}
+          onSubmit={handleTrainingFormSubmit}
+        />
+      )}
+      {trainingHistory
+        .filter(({ id }) => id === selectedEntryId)
+        .map(entry => (
+          <TrainingSummary key={entry.timestamp} entry={entry} />
+        ))}
     </>
   );
 };

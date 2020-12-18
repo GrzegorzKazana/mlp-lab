@@ -38,6 +38,7 @@ export default function ModelCreator() {
         style={{ flexGrow: 1, padding: 16, maxWidth: 640 }}
       >
         <Typography variant="h4">Layers</Typography>
+        <LayerForm handleSubmit={addLayer} />
         {model.layers.map((layer, idx) => {
           const isFirst = idx === 0;
           const isLast = idx === model.layers.length - 1;
@@ -54,7 +55,6 @@ export default function ModelCreator() {
             />
           );
         })}
-        <LayerForm handleSubmit={addLayer} />
       </Grid>
     </Grid>
   );

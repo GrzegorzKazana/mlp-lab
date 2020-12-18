@@ -2,6 +2,7 @@
 /* eslint-disable jest/expect-expect */
 import { of, throwError, Observable } from 'rxjs';
 import { ActionsObservable, StateObservable } from 'redux-observable';
+import { CALL_HISTORY_METHOD } from 'connected-react-router';
 import { marbles, configure } from 'rxjs-marbles/jest';
 
 import {
@@ -130,6 +131,11 @@ describe('data-loader effect', () => {
         b: Action.TRAIN_MODEL_PROGRESS({ value: 0 }),
         c: Action.TRAIN_MODEL_PROGRESS({ value: 0.5 }),
         d: Action.TRAIN_MODEL_FINISHED(mockHistoryEntry),
+        /**
+         * an additional navigation action will be dispatched
+         * along training finish
+         */
+        e: { type: CALL_HISTORY_METHOD } as AppAction,
       };
 
       const trainingProgress: Record<string, TrainingProgress> = {
@@ -140,7 +146,7 @@ describe('data-loader effect', () => {
 
       const input$ = m.hot('   -a-', values);
       const training$ = m.hot('-a-b-c', trainingProgress);
-      const expected$ = m.hot('-b-c-d', values);
+      const expected$ = m.hot('-b-c-(de)', values);
 
       const modelService = ({
         trainModel: () => training$,
@@ -207,6 +213,11 @@ describe('data-loader effect', () => {
         b: Action.TRAIN_MODEL_PROGRESS({ value: 0 }),
         c: Action.TRAIN_MODEL_PROGRESS({ value: 0.5 }),
         d: Action.TRAIN_MODEL_FINISHED(mockHistoryEntry),
+        /**
+         * an additional navigation action will be dispatched
+         * along training finish
+         */
+        e: { type: CALL_HISTORY_METHOD } as AppAction,
       };
 
       const trainingProgress: Record<string, TrainingProgress> = {
@@ -217,7 +228,7 @@ describe('data-loader effect', () => {
 
       const input$ = m.hot('   -a--a-', values);
       const training$ = m.hot('-a-b-c', trainingProgress);
-      const expected$ = m.hot('-b-c-d', values);
+      const expected$ = m.hot('-b-c-(de)', values);
 
       const modelService = ({
         trainModel: () => training$,

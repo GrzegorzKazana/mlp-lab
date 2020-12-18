@@ -34,7 +34,7 @@ export default function ModelCreator() {
       style={{ flexGrow: 1 }}
     >
       <TrainingTabs
-        history={state.history}
+        trainingHistory={state.history}
         dataAttributes={dataAttributes}
         handleTrainingFormSubmit={handleSubmit}
       />
