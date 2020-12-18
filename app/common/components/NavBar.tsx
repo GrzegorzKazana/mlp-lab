@@ -14,7 +14,9 @@ export default function NavBar() {
   const history = useHistory();
   const { pathname } = useLocation();
 
-  const currentRouteIndex = steps.findIndex(({ route }) => route === pathname);
+  const currentRouteIndex = steps.findIndex(({ route }) =>
+    pathname.startsWith(route)
+  );
   const currentStep = currentRouteIndex !== -1 ? currentRouteIndex : 0;
 
   return (

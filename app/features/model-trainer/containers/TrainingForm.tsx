@@ -8,7 +8,6 @@ import {
   ListItemText,
   Input,
   Chip,
-  TextField,
   Button,
   Box,
 } from '@material-ui/core';
@@ -16,6 +15,7 @@ import { Send } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 
 import { init, last } from '@/common/utils';
+import { NumberField } from '@/common/components';
 import { AttributeName } from '@/features/data-loader';
 
 import { Training } from '../models';
@@ -57,13 +57,13 @@ export const TrainingForm: React.FC<Props> = ({ dataAttributes, onSubmit }) => {
       // TODO: guarantee that loaded data is not empty
       last(dataAttributes) || ''
   );
-  const [epochs, setEpochs] = useState('10');
+  const [epochs, setEpochs] = useState(10);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     onSubmit({
-      epochs: Number.parseInt(epochs, 10),
+      epochs,
       inputAttributes,
       targetAttribute,
     });
@@ -119,12 +119,14 @@ export const TrainingForm: React.FC<Props> = ({ dataAttributes, onSubmit }) => {
       </FormControl>
 
       <FormControl fullWidth margin="normal">
-        <TextField
-          label="Epochs"
+        <NumberField
           value={epochs}
-          onChange={({ target }) =>
-            /^\d*$/.test(target.value) && setEpochs(target.value)
-          }
+          min={1}
+          max={1000}
+          label="Epochs"
+          required
+          error={Number.isNaN(epochs)}
+          onChange={setEpochs}
         />
       </FormControl>
 

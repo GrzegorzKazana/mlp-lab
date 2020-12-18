@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { FormControl, TextField, Button } from '@material-ui/core';
+import { FormControl, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+
+import { NumberField } from '@/common/components';
 
 import { Layer } from '../models';
 
@@ -25,23 +27,24 @@ type Props = {
 
 export const LayerForm: React.FC<Props> = ({ handleSubmit }) => {
   const classes = useStyles();
-  const [units, setUnits] = useState('10');
+  const [units, setUnits] = useState(10);
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const size = Number.parseInt(units, 10);
-    handleSubmit(Layer.ofSize(size));
+    handleSubmit(Layer.ofSize(units));
   };
 
   return (
     <form className={classes.container} onSubmit={onSubmit}>
       <FormControl margin="normal" className={classes.input}>
-        <TextField
-          label="Units"
+        <NumberField
           value={units}
-          onChange={({ target }) =>
-            /^\d*$/.test(target.value) && setUnits(target.value)
-          }
+          min={1}
+          max={1000}
+          label="Units"
+          required
+          error={Number.isNaN(units)}
+          onChange={setUnits}
         />
       </FormControl>
       <Button type="submit" variant="contained">
