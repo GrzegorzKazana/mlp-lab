@@ -9,6 +9,4 @@ export type {
   AttributeName,
 } from './models';
 
-export { DatasetService } from './services';
-
 export default DataLoader;

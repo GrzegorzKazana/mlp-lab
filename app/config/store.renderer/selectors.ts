@@ -1,6 +1,6 @@
-import { Selectors as DataSelectors } from '@/features/data-loader';
-import { Selectors as ModelCreatorSelectors } from '@/features/model-creator';
-import { Selectors as ModelTrainerSelectors } from '@/features/model-trainer';
+import { Selectors as DataSelectors } from '@/features/data-loader/store';
+import { Selectors as ModelCreatorSelectors } from '@/features/model-creator/store';
+import { Selectors as ModelTrainerSelectors } from '@/features/model-trainer/store';
 
 export const appSelectors = {
   data: DataSelectors,
